@@ -1,14 +1,14 @@
 import React from "react";
 import Button from '@mui/material/Button';
 
-export default function DeleteCar (props) {
-
-    const handleClick = (data) => {
+export default function DeleteCar ({deleteCar, params}) {
+    const [car, setCar] = React.useState({
+        brand: '', model: '', color: '', fuel: '', year: '', price: ''
+     })
+     
+    const handleClick = () => {
         if(window.confirm('Are you sure you want to delete this car?')){
-        console.log(props.value);
-        fetch(props.value, {method: 'DELETE'}).
-        then(res => props.fetchData(data))
-        .catch(err => console.error(err))
+        deleteCar(car, params.value);
     }
 }
     return (

@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import fetchData from './Carlist';
 
 
-export default function EditCarButton (props) {
+export default function EditCarButton ({updateCar, params}) {
 
     
     const [open, setOpen] = React.useState(false);
@@ -17,9 +17,9 @@ export default function EditCarButton (props) {
     })
 
     const handleClickOpen = () => {
-        console.log(props.data);
-         setCar({brand: props.value.brand, model: props.value.model, color: props.value.color,
-                 fuel: props.value.fuel, year: props.value.year, price: props.value.price })
+        
+         setCar({brand: params.data.brand, model: params.data.model, color: params.data.color,
+                 fuel: params.data.fuel, year: params.data.year, price: params.data.price })
          setOpen(true);
     };
 
@@ -31,21 +31,10 @@ export default function EditCarButton (props) {
         setCar({...car, [event.target.name]: event.target.value })
     }
 
-    const updateCar = (data) => {
-        console.log(props.data._links.car.href);
-        fetch(props.data._links.car.href, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(car)
-
-        })
-        
-        .then(res => props.fetchData(data))
-        .catch(err => console.error(err))
-        handleClose();
-    };
+    const editCar = () => {
+       updateCar(car, params.value);
+       setOpen(false);
+    }
 
     return (
         <div>
@@ -113,7 +102,7 @@ export default function EditCarButton (props) {
                     <Button onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={updateCar}>
+                    <Button onClick={editCar}>
                         Save
                     </Button>
                 </DialogActions>

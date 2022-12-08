@@ -56,18 +56,48 @@ export default function Carlist() {
         .catch(err => console.error(err))
     };
 
-    const rowDataGetter = function (params) {
-        return params.data;
-    };
+    
+    const deleteCar = (deleteCar, link) => {
+     
+        fetch(link, {
+             method: "DELETE" 
+            }).then((response) => {
+            if (response.ok) {
+                fetchData();
+            }
+        });
+    }
 
-    const rowDataGetter2 = function (params) {
-        return params.data._links.car.href;
-    };
+    const [columnDefs, setColumnDefs] = useState([
+            { field: "brand", sortable: true, filter: true, },
+            { field: "model", sortable: true, filter: true },
+            { field: "color", sortable: true, filter: true },
+            { field: "fuel", sortable: true, filter: true },
+            { field: "year", sortable: true, filter: true },
+            { field: "price", sortable: true, filter: true },
+           
+            {
+                headerName: "",
+                width: 100,
+                field: "_links.self.href",
+                cellRenderer: (params) => (
+                    <EditCarButton updateCar={updateCar} params={params} />
+                ),
+            },
+            {
+                headerName: "",
+                width: 100,
+                field: "_links.self.href",
+                cellRenderer: (params) => (
+                    <DeleteCar deleteCar={deleteCar} params={params} />
+                ),
+            },
+        ]);
+    
     return (
         <div className="ag-theme-material"
             style={{ height: '700px', width: '100%' }}>
             <AddCar saveCar={saveCar} />
-            <DeleteCar fetchData= {fetchData} />
             <AgGridReact
                 
                 filterable={true}
@@ -75,19 +105,9 @@ export default function Carlist() {
                 ref={gridRef}
                 rowSelection="single"
                 rowData={cars}
-                Components={{
-                    cellRenderer: DeleteCar, EditCarButton,
-                    
-                }}
-            >
-                <AgGridColumn headerName="Brand" field="brand" filter="agTextColumnFilter"></AgGridColumn>
-                <AgGridColumn headerName='Model' field='model' filter='agTextColumnFilter'></AgGridColumn>
-                <AgGridColumn headerName='Color' field='color' filter='agTextColumnFilter'></AgGridColumn>
-                <AgGridColumn headerName='Fuel' field='fuel' filter='agTextColumnFilter'></AgGridColumn>
-                <AgGridColumn headerName='Year' field='year' filter='agNumberColumnFilter'></AgGridColumn>
-                <AgGridColumn headerName='Price' field='price' filter='agNumberColumnFilter'></AgGridColumn>
-                <AgGridColumn headerName='' field='_links.self.href' cellRenderer={DeleteCar}></AgGridColumn>
-                <AgGridColumn headerName='' field='' cellRenderer={EditCarButton} valueGetter={rowDataGetter}/>
+                columnDefs={columnDefs}
+
+            > 
                 
             </AgGridReact>
             <SimpleSnackbar />
